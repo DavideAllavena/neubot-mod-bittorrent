@@ -17,6 +17,7 @@
 
 import array
 import random
+from ..runtime.third_party import six
 
 counts = []
 for i in range(256):
@@ -33,9 +34,17 @@ class Bitfield(object):
         if bitstring is None:
             self.numfalse = length
             if extra:
-                self.bits = array.array('B', chr(0) * (rlen + 1))
+                if six.PY3:
+                    body = str.encode(chr(0) * (rlen + 1), 'iso-8859-1')
+                else:
+                    body = chr(0) * (rlen + 1)
+                self.bits = array.array('B', body)
             else:
-                self.bits = array.array('B', chr(0) * rlen)
+                if six.PY3:
+                     body = str.encode(chr(0) * rlen, 'iso-8859-1')
+                else:
+                     body = chr(0) * (rlen + 1)
+                self.bits = array.array('B', body)
         else:
             if extra:
                 if len(bitstring) != rlen + 1:
