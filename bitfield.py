@@ -19,9 +19,9 @@ import array
 import random
 
 counts = []
-for i in xrange(256):
+for i in range(256):
     t = 0
-    for j in xrange(8):
+    for j in range(8):
         t = t + ((i >> j) & 1)
     counts.append(chr(t))
 counts = ''.join(counts)
