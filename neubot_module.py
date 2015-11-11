@@ -1,4 +1,4 @@
-# mod_dash/neubot_module.py
+# mod_bittorrent/neubot_module.py
 
 #
 # Copyright (c) 2013
@@ -24,8 +24,11 @@
 """ The entry point of the Bittorrent module """
 
 import logging
-from ..lib_net.poller import POLLER
+from ..runtime.poller import POLLER
 from .. import mod_bittorrent
+from .negotiate_server_bittorrent import NEGOTIATE_SERVER_BITTORRENT
+from ..negotiate_server import NEGOTIATE_SERVER
+
 def _run_test(message):
     """ Run the Bittorrent test """
     raise RuntimeError("Not implemented")
@@ -35,16 +38,20 @@ def mod_load(context, message):
     logging.debug("bittorrent: init for context '%s'... in progress", context)
 
     if context == "server":
-
         negotiate_server = message["negotiate_server"]
         http_server = message["http_server"]
 
         logging.debug("bittorrent: register negotiate server module... in progress")
+        NEGOTIATE_SERVER.register_module('bittorrent', NEGOTIATE_SERVER_BITTORRENT)
+        logging.debug("bittorrent: register negotiate server module... complete")
 
         conf = message["configuration"]
         conf["bittorrent.address"] = conf["address"]
         conf["bittorrent.listen"] = True
         conf["bittorrent.negotiate"] = True
         mod_bittorrent.run(POLLER, conf)
+
+    else:
+        logging.warning("bittorrent: unknown context: %s", context)
 
     logging.debug("bittorrent: init for context '%s'... complete", context)
